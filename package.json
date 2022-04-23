@@ -42,6 +42,7 @@
         "webpack-shell-plugin-next": "^2.2.2"
     },
     "dependencies": {
-        "gsap": "^3.9.1"
+        "gsap": "^3.9.1",
+        "pixi.js": "^6.3.0"
     }
 }

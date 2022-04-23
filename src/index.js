@@ -2,6 +2,7 @@
 
 import * as PIXI from 'pixi.js';
 import fragment from './shader/fragment.glsl';
+import gsap from 'gsap';
 
 import './scss/main.scss';
 import img0 from './assets/alexander-wende.jpg';
@@ -10,9 +11,16 @@ import img2 from './assets/lucas-gouvea.jpg';
 import img3 from './assets/oleg-onchky.jpg';
 import img4 from './assets/photo.jpg';
 
+const slides = 5;
+
 (function () {
     window.addEventListener('DOMContentLoaded', (e) => {
 
+        const nav = document.querySelector('.nav');
+        const a = document.createElement('a');
+        for (let i = 0; i < slides; i++) {
+            nav.appendChild(a.cloneNode());
+        }
 
         const app = new PIXI.Application({
             width: window.innerWidth,
@@ -22,6 +30,7 @@ import img4 from './assets/photo.jpg';
         document.body.appendChild(app.view);
 
         const loader = app.loader;
+
         loader.add('img0', img0);
         loader.add('img1', img1);
         loader.add('img2', img2);
@@ -54,39 +63,68 @@ import img4 from './assets/photo.jpg';
             bunny.anchor.x = 0.5;
             bunny.anchor.y = 0.5;
 
-            bunny.filters = [filter];
+            filter.uniforms.uvAspect = getAspectRatio(resources.img4);
 
-            const wAspect = window.innerWidth / window.innerHeight;
-            const iAspect = resources.img4.texture.width / resources.img4.texture.height;
+            filter.uniforms.uProgress = 0;
+            const a = document.querySelectorAll('.nav a');
+            let prevSlide = 0;
+            a.forEach((el, i) => {
+                el.addEventListener('mouseover', () => {
+                    gsap.to(filter.uniforms, {
+                        uProgress: i,
+                        ease: "power3.out",
+                        onUpdate: () => {
+                            const num = Math.floor(filter.uniforms.uProgress);
+                            filter.uniforms.uTextureOne = resources[`img${num}`].texture;
 
-            if (wAspect > iAspect) {
-                filter.uniforms.uvAspect = {
-                    x: 1,
-                    y: iAspect / wAspect
-                };
-            } else {
-                filter.uniforms.uvAspect = {
-                    y: 1,
-                    x: wAspect / iAspect
-                };
-            }
+                            const next = num + 1 === slides ? 'img0' : `img${num + 1}`;
+                            filter.uniforms.uTextureTwo = resources[next].texture;
 
-            console.log(wAspect, iAspect);
+                            // const curAspect = getAspectRatio(resources[`img${num}`]);
+                            // const nextAspect = getAspectRatio(resources[next]);
 
-            filter.uniforms.uTextureOne = resources.img0.texture;
-            filter.uniforms.uTextureTwo = resources.img1.texture;
-            filter.uniforms.uTextureFour = resources.img4.texture;
+                            // const time = filter.uniforms.uProgress - i + 1;
+                            // console.log(curAspect, nextAspect);
+
+                            // // filter.uniforms.uProgress
+                            // filter.uniforms.uvAspect = {
+                            //     x: nextAspect.x + (nextAspect.x - nextAspect.x) * time,
+                            //     y: nextAspect.y + (nextAspect.y - nextAspect.y) * time
+                            // };
+                        }
+                    });
+                });
+            });
+
+            filter.uniforms.uTextureOne = resources[`img0`].texture;
+            filter.uniforms.uTextureTwo = resources[`img1`].texture;
 
             // Add the bunny to the scene we are building
+            bunny.filters = [filter];
             app.stage.addChild(bunny);
 
-            filter.uniforms.uTime = 0;
             // Listen for frame updates
             app.ticker.add(() => {
-                filter.uniforms.uTime += 0.02;
                 // each frame we spin the bunny around a bit
                 // bunny.rotation += 0.01;
             });
         });
     });
+
+    function getAspectRatio(img) {
+        const wAspect = window.innerWidth / window.innerHeight;
+        const iAspect = img.texture.width / img.texture.height;
+
+        if (wAspect > iAspect) {
+            return {
+                x: 1,
+                y: iAspect / wAspect
+            };
+        } else {
+            return {
+                y: 1,
+                x: wAspect / iAspect
+            };
+        }
+    }
 })();

@@ -2,9 +2,8 @@ varying vec2 vTextureCoord;
 uniform sampler2D uSampler;
 uniform sampler2D uTextureOne;
 uniform sampler2D uTextureTwo;
-uniform sampler2D uTextureFour;
 uniform vec2 uvAspect;
-uniform float uTime;
+uniform float uProgress;
 // uniform map3 mappedMatrix;
 
 mat2 rotate(float a) {
@@ -17,13 +16,17 @@ void main() {
     // vec3 map = vec3(vTextureCoord.xy, 1.) * mappedMatrix;
     // vec2 uv = map.xy;
     // vec2 uv = (vTextureCoord.xy - 0.5)*uvAspect + 0.5;
-    vec2 uv = (vTextureCoord.xy - 0.5)*uvAspect + 0.5;
-    vec2 uvDivided = fract(uv * vec2(10.0, 1.0));
 
-    float time = abs(sin(uTime));
-    vec2 uvDisplaced = uv + time * rotate(2.0) * uvDivided * vec2(uv.x / 4.0, 0.0);
+    float progress = fract(uProgress);
+
+    vec2 uv = (vTextureCoord.xy - 0.5)*uvAspect + 0.5;
+    vec2 uvDivided = fract(uv * vec2(200.0, 1.0));
+
+    vec2 uvDisplaced1 = uv + rotate(3.14159/4.) * uvDivided * progress * 0.1;
+    vec2 uvDisplaced2 = uv + rotate(3.14159/4.) * uvDivided  * (1.0 - progress) * 0.1;
     
-    gl_FragColor = vec4(1.0, 0.5, 0.0, 1.0);
-    gl_FragColor = texture2D(uTextureOne, uvDisplaced);
-    // gl_FragColor = vec4(uvDivided, 0., 1.);
+    vec4 img1 = texture2D(uTextureOne, uvDisplaced1);
+    vec4 img2 = texture2D(uTextureTwo, uvDisplaced2);
+
+    gl_FragColor = mix(img1, img2, progress);
 }

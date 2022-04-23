@@ -1,0 +1,35 @@
+@import './libs/_functions';
+@import './config/variables';
+@import './libs/_mixins';
+.nav {
+    display: block;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    ul {
+        padding: 0;
+        margin: 0;
+        li {
+            display: inline-block;
+            a {
+                font: normal normal 14px / 1.4 sans-serif;
+                display: block;
+                text-transform: uppercase;
+                text-decoration: none;
+                color: #333;
+                padding: 20px 10px;
+                &:hover {
+                    cursor: pointer;
+                    color: #d00;
+                }
+            }
+        }
+    }
+}
+
+h1 {
+    font: bold normal 50px / 1.4 sans-serif;
+    text-align: center;
+    span {
+        display: inline-block;
+    }
+}

@@ -4,6 +4,7 @@ uniform sampler2D uTextureOne;
 uniform sampler2D uTextureTwo;
 uniform vec2 uvAspect;
 uniform float uProgress;
+uniform float uShreds;
 // uniform map3 mappedMatrix;
 
 mat2 rotate(float a) {
@@ -20,7 +21,7 @@ void main() {
     float progress = fract(uProgress);
 
     vec2 uv = (vTextureCoord.xy - 0.5)*uvAspect + 0.5;
-    vec2 uvDivided = fract(uv * vec2(200.0, 1.0));
+    vec2 uvDivided = fract(uv * vec2(uShreds, 1.0));
 
     vec2 uvDisplaced1 = uv + rotate(3.14159/4.) * uvDivided * progress * 0.1;
     vec2 uvDisplaced2 = uv + rotate(3.14159/4.) * uvDivided  * (1.0 - progress) * 0.1;

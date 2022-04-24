@@ -3,16 +3,11 @@ import fragment from '../shader/fragment.glsl';
 import vertex from '../shader/vertex.glsl';
 import gsap from 'gsap';
 
-import img0 from '../assets/alexander-wende.jpg';
-import img1 from '../assets/jezael-melgoza.jpg';
-import img2 from '../assets/lucas-gouvea.jpg';
-import img3 from '../assets/oleg-onchky.jpg';
-import img4 from '../assets/photo.jpg';
-
 export default class Shredder {
     constructor(args) {
 
-        this.slides = args.slides;
+        this.images = args.images;
+        this.slides = args.images.length;
         this.currentSlide = args.currentSlide;
         this.shreds = args.shreds;
         this.speed = args.speed;
@@ -27,7 +22,9 @@ export default class Shredder {
         });
         this.loader = this.app.loader;
 
-        document.body.appendChild(this.app.view);
+        document
+            .querySelector(args.container)
+            .appendChild(this.app.view);
 
         this.init();
     }
@@ -41,11 +38,9 @@ export default class Shredder {
         }
 
         // Load images
-        this.loader.add('img0', img0);
-        this.loader.add('img1', img1);
-        this.loader.add('img2', img2);
-        this.loader.add('img3', img3);
-        this.loader.add('img4', img4);
+        this.images.forEach((el, i) => {
+            this.loader.add(`img${i}`, el);
+        });
     }
 
     events() {
